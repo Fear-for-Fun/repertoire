@@ -1,5 +1,6 @@
 --!nonstrict
-local Repertoire = require(game:GetService("ReplicatedStorage").Packages.Repertoire)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Repertoire = require(ReplicatedStorage.Packages.Repertoire)
 
 local Reactions = Repertoire.Reactions
 local Actions = Repertoire.Actions
@@ -9,8 +10,8 @@ local Scene = Repertoire.Scene
 local Bombo2Scene = Scene()
 
 local Bombo2 = Accent(workspace.Bomb2)
-Bombo2:AddAction(Actions.RandomLifetime):Props({Min = 1, Max = 1})
-Bombo2:AddAction(Actions.RandomCount):Props({Min = 30, Max = 75})
+Bombo2:AddAction(Actions.RandomLifetime):Props({Min = 1, Max = 8})
+Bombo2:AddAction(Actions.RandomCount):Props({Min = 10, Max = 20})
 Bombo2:AddReaction(Reactions.RandomScale):Hook(Bombo2.OnSpawned):Props({
 	MinScale = -20, MaxScale = 70, Weight = 120, UseMultiplication = true
 })
@@ -35,12 +36,12 @@ Bombo:AddReaction(Reactions.TweenScale):Hook(Bombo.OnDespawned):Props({
 	Scale = 0.1,
 	TweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 })
-Bombo:AddReaction(Reactions.SpawnAccent):Hook(Bombo.OnDespawned):Props({
-	AccentComponent = Bombo2,
-})
+-- Bombo:AddReaction(Reactions.SpawnAccent):Hook(Bombo.OnDespawned):Props({
+-- 	AccentComponent = Bombo2,
+-- })
 
 local Sequence = Bombo2Scene:Sequence(function(seq)
-	Bombo:Spawn(Vector3.yAxis * 20)
+	Bombo2:Spawn(Vector3.yAxis * 20)
 end)
 Sequence:Start()
 
