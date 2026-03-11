@@ -1,16 +1,13 @@
 --!nonstrict
 local SequenceComponent = require("@self/SequenceComponent")
-local AccentComponent = require("./AccentComponent")
 
 export type SequenceComponent = SequenceComponent.SequenceComponent
-type AccentComponent = AccentComponent.AccentComponent
 
 local SceneComponent = {}
 SceneComponent.__index = SceneComponent
 
 export type SceneComponent = typeof(setmetatable(
 	{} :: {
-		AccentComponents: { AccentComponent },
 		SequenceComponents: { SequenceComponent },
 	},
 	SceneComponent
@@ -18,7 +15,6 @@ export type SceneComponent = typeof(setmetatable(
 
 function SceneComponent.new(): SceneComponent
 	return setmetatable({
-		AccentComponents = {},
 		SequenceComponents = {},
 	}, SceneComponent)
 end
@@ -32,10 +28,6 @@ end
 function SceneComponent.Cleanup(self: SceneComponent)
 	for _, Sequence in self.SequenceComponents do
 		(Sequence :: SequenceComponent):Destroy()
-	end
-
-	for _, Accent in self.AccentComponents do
-		Accent:Destroy()
 	end
 end
 

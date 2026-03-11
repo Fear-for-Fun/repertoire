@@ -213,9 +213,14 @@ Config.Reactions = {
 
 	Force = function(
 		Inst: Instance,
-		Properties: (ForceMod.Settings & {
+		Properties: {
+			Velocity: number?,
+			Direction: Vector3?,
+			RelativeTo: Enum.ActuatorRelativeTo?,
+			Spread: (number | Vector2)?,
+			RandomRange: number?,
 			ParentTo: Instance?,
-		}) | {}
+		}
 	)
 		local TrueProperties = Properties or {} :: any
 		local ParentTo = TrueProperties.ParentTo or Inst
