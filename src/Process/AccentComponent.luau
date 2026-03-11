@@ -14,7 +14,7 @@ CACHED_PART.CanCollide = false
 CACHED_PART.Color = Color3.fromRGB(255, 0, 0)
 CACHED_PART.CanQuery = false
 CACHED_PART.Anchored = true
-CACHED_PART.Transparency = 0.9
+CACHED_PART.Transparency = 1
 
 local COLLISION_GROUP = "PrimaryJunk"
 
@@ -105,17 +105,18 @@ export type Builder<P> = {
 	Accent: any,
 }
 
+--[[
+	Could potentially be updated to be based on clone count rather than component count
+]]
 local ACTIVE_COMPONENTS: { [number]: AccentComponent } = {}
-local SCHEDULER_RUNNING = false
+local CONNECTION: RBXScriptConnection?
 
 local function startScheduler()
-	if SCHEDULER_RUNNING then
+	if CONNECTION then
 		return
 	end
 
-	SCHEDULER_RUNNING = true
-
-	RunService.Heartbeat:Connect(function()
+	CONNECTION = RunService.Heartbeat:Connect(function()
 		local Now = os.clock()
 
 		for _, Component in ACTIVE_COMPONENTS do
@@ -124,6 +125,17 @@ local function startScheduler()
 			end
 		end
 	end)
+end
+
+local function stopScheduler()
+	if next(ACTIVE_COMPONENTS) ~= nil then
+		return
+	end
+
+	if CONNECTION then
+		CONNECTION:Disconnect()
+		CONNECTION = nil
+	end
 end
 
 function Builder.new<T, P>(Config: BuilderConfig<T, P>, Accent: AccentComponent): Builder<P>
@@ -337,6 +349,8 @@ function AccentComponent.Destroy(self: AccentComponent)
 	self.OnDespawned:Destroy()
 	self.OnSpawned:Destroy()
 	self.OnTouched:Destroy()
+
+	stopScheduler()
 
 	table.clear(self :: any)
 	setmetatable(self :: any, nil)
